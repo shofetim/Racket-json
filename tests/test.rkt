@@ -16,3 +16,10 @@
 (check-true (jsexpr? (hasheq 'foo "string")))
 (check-true (jsexpr? (hasheq 'foo 10)))
 (check-false (jsexpr? 3+4i))
+
+;; Test reading json
+;;(check-eq? (read-json (open-input-string "-23")) -23 "Parsing negative ints")
+(check-equal? (read-json (open-input-string "0.023")) .023 "Parsing decimals")
+(check-eq? (read-json (open-input-string "2")) 2 "Parsing a lone number")
+(check-eq? (read-json (open-input-string " 2")) 2 "Parsing when value is preceded by whitespace")
+

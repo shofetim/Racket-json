@@ -28,6 +28,7 @@
     [else (error 'json "bad json value: ~v" json)]))
 
 (define (read-json [port (current-input-port)])
+  (skip-whitespace port)
   (case (peek-char port)
     [(#\{) (read/hash port)]
     [(#\[) (read/list port)]
