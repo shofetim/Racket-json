@@ -1,118 +1,21 @@
-* json
-** General notes
-   There is an existing json-rpc protocol, which may be useful for calling
-   server side code from frontend js?
+* Racket/json
+  A parser / generator of JSON in Racket
+  Based on http://planet.racket-lang.org/display.ss?package=json.plt&owner=dherman
 
-** Implementation Notes
+** TODO
    What about large numbers overflowing ECMAScript's numbers (-2^31 to (2^31 -
    1))?
 
    Date formats?
 
-   Possibly simplify the lib, which should increase speed, rather then be
-   exhaustive
-   
    Need to look at js and racket types.
 
-   A json parser is a LL parser, and the generic way to build it is to "peek"
-   ahead a single char, and base the next step in parsing on that char.
-
 ** Links
-   - https://github.com/dakrone/cheshire
-     
-     A closure library, it says it is fast, supports binary encoded json, and
-     has swappable encoding engines. Not much to contribute to my
-     implementation.
    - http://json.org/
-
      Douglas Crockford's site on JSON, the authoritative source.
+
    - http://www.json.org/JSON_checker/
-     
      A helper library and test for building a json parser/generator.
-   - http://common-lisp.net/project/cl-json/
-
-     A JSON parser and generator in Common-Lisp. Its well documented, with
-     tests, and should be pretty fast. Probably most helpful for my
-     implementation.
-   - http://cvs.savannah.gnu.org/viewvc/*checkout*/emacs/lisp/json.el?root=emacs
-     Json parser/generator in elisp
-
-     Since js key value pairs can be mapped to several different elisp structs,
-     the parser allow choice as to what should be generated from json.
-
-     Is now part of emacs.
-
-     Mostly parses / generates just like dherman/json except for ability to
-     choose what elisp types are generated.
-   - http://common-lisp.net/project/yason/
-     Simple json parser. Also offers choice of data formats to be returned. Also
-     has choice of stream or bulk parsing / generating.
-   - https://github.com/esnme/ultrajson
-     Fast C implemented parser/generator, with python bindings
-   - How to build own parser
-     http://techblog.procurios.nl/k/618/news/view/14605/14863/How-do-I-write-my-own-parser-for-JSON.html
 
    - http://www.neilvandyke.org/racket-json-parsing/
      A racket library for json parsing.
-    
-
-
-
-* Issues
-  1) 
-  (read-json (open-input-string "-23"))
-  read: expected: digits, got: -
-
-  2) 
-  Current number parser is unable to parse negative numbers as well as numbers
-  with decimal points and exponents. I have a small patch to fix this.
-
-  --- main.ss.old 2010-12-27 16:31:03.000000000 +0100
-  +++ main.ss 2010-12-27 16:32:48.000000000 +0100
-  @@ -163,17 +163,16 @@
-  digits))
-
-  (define (read/exponent port)
-- (expect (read-char port) #\e #\E)
-  (let ([sign (case (peek-char port)
-  [(#\- #\+) (list (read-char port))]
-  [else '()])])
-  (append sign (read/digits port))))
-
-  (define (read/number port)
-- (let* ([sign (if (eq? (peek-char port) #\-) '(#\-) '())]
-+ (let* ([sign (if (eq? (peek-char port) #\-) (list (read-char port)) '())]
-  [digits (read/digits port)]
-- [frac (if (eq? (peek-char port) #\.) (read/digits port) '())]
-- [exp (if (memq (peek-char port) '(#\e #\E)) (read/exponent port) '())])
-+ [frac (if (eq? (peek-char port) #\.) (list* (read-char port) (read/digits port)) '())]
-+ [exp (if (memq (peek-char port) '(#\e #\E)) (list* (read-char port) (read/exponent port)) '())])
-  (string->number
-  (list->string
-  (append sign digits frac exp)))))
-
-  3) doesn't parse a lone number
-     Here's a patch that fixes the problem (not necessarily how you want to fix it, but fyi):
-Index: json.ss
-===================================================================
---- json.ss     (revision 1081)
-+++ json.ss     (working copy)
-@@ -149,7 +149,8 @@
-   (void))
-
- (define (decimal-point? ch)
-- (char=? ch #\.))
-- (and (char? ch) ; because eof-object can be passed in
-- (char=? ch #\.))
-- 
-
- 4)
-parse-json fails when whitespace precedes the input.
-please fix this by modifying read-json like:
-(define (read-json [port (current-input-port)])
-  (skip-whitespace port)
-  (case (peek-char port)
-    [(#\{) (read/hash port)]
-    ...
-
-
