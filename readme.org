@@ -1,0 +1,58 @@
+* Issues
+  1) 
+  (read-json (open-input-string "-23"))
+  read: expected: digits, got: -
+
+  2) 
+  Current number parser is unable to parse negative numbers as well as numbers
+  with decimal points and exponents. I have a small patch to fix this.
+
+  --- main.ss.old 2010-12-27 16:31:03.000000000 +0100
+  +++ main.ss 2010-12-27 16:32:48.000000000 +0100
+  @@ -163,17 +163,16 @@
+  digits))
+
+  (define (read/exponent port)
+- (expect (read-char port) #\e #\E)
+  (let ([sign (case (peek-char port)
+  [(#\- #\+) (list (read-char port))]
+  [else '()])])
+  (append sign (read/digits port))))
+
+  (define (read/number port)
+- (let* ([sign (if (eq? (peek-char port) #\-) '(#\-) '())]
++ (let* ([sign (if (eq? (peek-char port) #\-) (list (read-char port)) '())]
+  [digits (read/digits port)]
+- [frac (if (eq? (peek-char port) #\.) (read/digits port) '())]
+- [exp (if (memq (peek-char port) '(#\e #\E)) (read/exponent port) '())])
++ [frac (if (eq? (peek-char port) #\.) (list* (read-char port) (read/digits port)) '())]
++ [exp (if (memq (peek-char port) '(#\e #\E)) (list* (read-char port) (read/exponent port)) '())])
+  (string->number
+  (list->string
+  (append sign digits frac exp)))))
+
+  3) doesn't parse a lone number
+     Here's a patch that fixes the problem (not necessarily how you want to fix it, but fyi):
+Index: json.ss
+===================================================================
+--- json.ss     (revision 1081)
++++ json.ss     (working copy)
+@@ -149,7 +149,8 @@
+   (void))
+
+ (define (decimal-point? ch)
+- (char=? ch #\.))
+- (and (char? ch) ; because eof-object can be passed in
+- (char=? ch #\.))
+- 
+
+ 4)
+parse-json fails when whitespace precedes the input.
+please fix this by modifying read-json like:
+(define (read-json [port (current-input-port)])
+  (skip-whitespace port)
+  (case (peek-char port)
+    [(#\{) (read/hash port)]
+    ...
+
+
