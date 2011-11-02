@@ -22,7 +22,7 @@
 
 @title[#:tag "top"]{@bold{JSON}}
 
-by Dave Herman (@tt{dherman at ccs dot neu dot edu})
+by Jordan Schatz (@tt{jordan@noionlabs.com})
 
 This library provides utilities for marshalling and unmarshalling data in the JSON data exchange format.
 See the @link["http://www.json.org"]{JSON web site} and the @link["http://www.ietf.org/rfc/rfc4627.txt?number=4627"]{JSON RFC}
