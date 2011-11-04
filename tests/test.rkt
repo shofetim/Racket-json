@@ -26,12 +26,14 @@
 (check-equal? (read-json (open-input-string "1.0E+10")) 10000000000.0)
 (check-equal? (read-json (open-input-string "1.0E-10")) 1e-10)
 (check-equal? (read-json (open-input-string "1.0E-3")) 0.001)
+(check-equal? (read-json (open-input-string "{ }")) #hasheq())
+(check-equal? (read-json (open-input-string "[ ]")) '())
 
 
 ;; Test using sample json files
-;; (check-eq? (let ([in (open-input-file "json-samples/pass1.json")])
-;;              (read-json in))
-;;            '??)
+(check-equal? (let ([in (open-input-file "json-samples/pass1.json")])
+                (read-json in))
+              (read (open-input-file "json-samples/pass1.rkt")))
 
 (check-equal? (let ([in (open-input-file "json-samples/pass3.json")])
                 (read-json in))

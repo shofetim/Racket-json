@@ -88,6 +88,7 @@
 
 (define (read/list port)
   (expect (read-char port) #\[)
+  (skip-whitespace port)
   (begin0 (for/list ([value
                       (in-port-until port
                                      (lambda (port)
