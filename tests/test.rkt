@@ -21,5 +21,23 @@
 ;;(check-eq? (read-json (open-input-string "-23")) -23 "Parsing negative ints")
 (check-equal? (read-json (open-input-string "0.023")) .023 "Parsing decimals")
 (check-eq? (read-json (open-input-string "2")) 2 "Parsing a lone number")
-(check-eq? (read-json (open-input-string " 2")) 2 "Parsing when value is preceded by whitespace")
+(check-eq? (read-json (open-input-string " 2")) 2 "value is preceded by whitespace")
 
+
+;; Test using sample json files
+(check-equal? (let ([in (open-input-file "json-samples/pass3.json")])
+                (read-json in))
+              '#hasheq(
+                       (|JSON Test Pattern pass3| . 
+                              #hasheq(
+                                      (|The outermost value| . "must be an object or array.") 
+                                      (|In this test| . "It is an object.")))))
+
+;;Failing
+(check-eq? (let ([in (open-input-file "json-samples/pass1.json")])
+             (read-json in))
+           '??)
+
+(check-equal? (let ([in (open-input-file "json-samples/pass2.json")])
+                (read-json in))
+              '((((((((((((((((((("Not too deep"))))))))))))))))))))
