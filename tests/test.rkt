@@ -23,6 +23,9 @@
 (check-equal? (read-json (open-input-string "2")) 2 "Parsing a lone number")
 (check-equal? (read-json (open-input-string " 2")) 2 "value is preceded by whitespace")
 (check-equal? (read-json (open-input-string "1.0E10")) 10000000000.0)
+(check-equal? (read-json (open-input-string "1.0E+10")) 10000000000.0)
+(check-equal? (read-json (open-input-string "1.0E-10")) 1e-10)
+(check-equal? (read-json (open-input-string "1.0E-3")) 0.001)
 
 
 ;; Test using sample json files
