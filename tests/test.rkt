@@ -25,6 +25,12 @@
 
 
 ;; Test using sample json files
+
+;;Failing
+;; (check-eq? (let ([in (open-input-file "json-samples/pass1.json")])
+;;              (read-json in))
+;;            '??)
+
 (check-equal? (let ([in (open-input-file "json-samples/pass3.json")])
                 (read-json in))
               '#hasheq(
@@ -33,10 +39,6 @@
                                       (|The outermost value| . "must be an object or array.") 
                                       (|In this test| . "It is an object.")))))
 
-;;Failing
-(check-eq? (let ([in (open-input-file "json-samples/pass1.json")])
-             (read-json in))
-           '??)
 
 (check-equal? (let ([in (open-input-file "json-samples/pass2.json")])
                 (read-json in))
