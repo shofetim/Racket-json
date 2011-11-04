@@ -165,17 +165,18 @@
     digits))
 
 (define (read/exponent port)
-  (expect (read-char port) #\e #\E)
   (let ([sign (case (peek-char port)
                 [(#\- #\+) (list (read-char port))]
                 [else '()])])
     (append sign (read/digits port))))
 
 (define (read/number port)
-  (let* ([sign (if (eq? (peek-char port) #\-) '(#\-) '())]
+  (let* ([sign (if (eq? (peek-char port) #\-) (list (read-char port)) '())]
          [digits (read/digits port)]
-         [frac (if (eq? (peek-char port) #\.) (read/digits port) '())]
-         [exp (if (memq (peek-char port) '(#\e #\E)) (read/exponent port) '())])
+         [frac (if (eq? (peek-char port) #\.) 
+                   (list* (read-char port) (read/digits port)) '())]
+         [exp (if (memq (peek-char port) '(#\e #\E))
+                  (list* (read-char port) (read/exponent port)) '())])
     (string->number
      (list->string
       (append sign digits frac exp)))))
