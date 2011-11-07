@@ -28,6 +28,9 @@
 (check-equal? (read-json (open-input-string "1.0E-3")) 0.001)
 (check-equal? (read-json (open-input-string "{ }")) #hasheq())
 (check-equal? (read-json (open-input-string "[ ]")) '())
+(check-equal? (read-json (open-input-string "true")) #t) ;;A lone boolean
+(check-equal? (read-json (open-input-string "\"ok\"")) "ok")
+
 
 
 ;; Test using sample json files
