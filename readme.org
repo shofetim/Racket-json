@@ -2,14 +2,6 @@
   A parser / generator of JSON in Racket
   Based on http://planet.racket-lang.org/display.ss?package=json.plt&owner=dherman
 
-** TODO
-   What about large numbers overflowing ECMAScript's numbers (-2^31 to (2^31 -
-   1))?
-
-   Date formats?
-
-   Need to look at js and racket types.
-
 ** Links
    - http://json.org/
      Douglas Crockford's site on JSON, the authoritative source.
@@ -19,3 +11,7 @@
 
    - http://www.neilvandyke.org/racket-json-parsing/
      A racket library for json parsing.
+** Depreciated
+   This library is tested and working, but there is now a json parser /
+   generator included in the racket development tree, and slated for release
+   summer of 2012.
